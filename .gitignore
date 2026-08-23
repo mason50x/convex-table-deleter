@@ -1,0 +1,4 @@
+# Build artifact — regenerate with the zip command in the README
+*.zip
+
+.DS_Store
