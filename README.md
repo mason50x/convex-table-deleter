@@ -103,8 +103,9 @@ anywhere. No permissions beyond the content script.
 - No data is collected, stored, or transmitted.
 - No remote code.
 
-**Note on the name/logo**: the icon is derived from the Convex logo and the
-name contains the "Convex" trademark. The Web Store's impersonation policy can
-flag this; if review rejects it, rename to something like "Table Deleter for
-Convex" and state in the listing that it is an unofficial third-party tool not
+**Note on the name**: the icon is an original design (red tile + trash glyph,
+matching the extension's own buttons), but the name still contains the
+"Convex" trademark. The Web Store's impersonation policy can flag this; if
+review rejects it, rename to something like "Table Deleter for Convex" and
+state in the listing that it is an unofficial third-party tool not
 affiliated with Convex, Inc.
