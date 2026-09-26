@@ -11,22 +11,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate manifest.json
-        run: python3 -m json.tool manifest.json > /dev/null
+      - uses: pnpm/action-setup@v4
 
-      - name: Syntax-check content scripts
-        run: |
-          for f in src/*.js; do node --check "$f"; done
-          # The scripts share one scope, so also check the concatenation in
-          # manifest order — catches duplicate top-level declarations.
-          files=$(python3 -c "import json; print(' '.join(json.load(open('manifest.json'))['content_scripts'][0]['js']))")
-          cat $files > /tmp/combined.js
-          node --check /tmp/combined.js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
 
-      - name: Build store zip
-        run: zip -r convex-table-deleter.zip manifest.json styles.css src icons/icon-16.png icons/icon-32.png icons/icon-48.png icons/icon-128.png
+      - run: pnpm install --frozen-lockfile
+
+      # Extension: manifest parses, scripts pass `node --check` individually
+      # and concatenated. Web: typecheck.
+      - run: pnpm check
+
+      - name: Build website
+        run: pnpm build
+
+      - name: Build extension store zip
+        run: pnpm zip
 
       - uses: actions/upload-artifact@v4
         with:
           name: convex-table-deleter
-          path: convex-table-deleter.zip
+          path: apps/extension/convex-table-deleter.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: website
+          path: apps/web/dist

@@ -22,10 +22,26 @@ table. This extension automates that whole flow.
 - Every action is confirm-armed: first click arms the button ("Confirm?"),
   second click runs it. It auto-disarms after 4 seconds.
 
-## Code layout
+## Repo layout
 
-Plain content scripts, no build step. They load in the order listed in
-`manifest.json` and share one scope:
+A pnpm workspace with two apps:
+
+- `apps/extension` — the Chrome extension itself
+- `apps/web` — the marketing site, Privacy Policy and Terms of Service
+  (Vite + React + Tailwind)
+
+```sh
+pnpm install
+pnpm dev     # run the website locally
+pnpm check   # extension syntax checks + website typecheck
+pnpm build   # build the website into apps/web/dist
+pnpm zip     # build the extension's Web Store zip
+```
+
+### Extension
+
+Plain content scripts, no build step. They live in `apps/extension` and load
+in the order listed in `manifest.json`, sharing one scope:
 
 - `src/util.js` — generic helpers (polling, synthetic keyboard/input events)
 - `src/dashboard.js` — everything that knows the dashboard's DOM: finding
@@ -39,18 +55,27 @@ Plain content scripts, no build step. They load in the order listed in
 
 1. Open `chrome://extensions`
 2. Enable **Developer mode**
-3. **Load unpacked** → select this folder
+3. **Load unpacked** → select the `apps/extension` folder
 
 ## Build the store zip
 
-No build step for development — the zip only matters for Web Store uploads:
+No build step for development — the zip only matters for Web Store uploads.
+`pnpm zip` writes `apps/extension/convex-table-deleter.zip`. CI builds the same
+zip on every push and attaches it as a workflow artifact.
 
-```sh
-zip -r convex-table-deleter.zip manifest.json styles.css src \
-  icons/icon-16.png icons/icon-32.png icons/icon-48.png icons/icon-128.png
-```
+When releasing, bump `version` in both `apps/extension/manifest.json` and
+`apps/extension/package.json` (`pnpm check` fails if they differ).
 
-CI builds the same zip on every push and attaches it as a workflow artifact.
+## Website
+
+`apps/web` builds to a fully static site: every page (`/`, `/privacy/`,
+`/terms/`, plus `404.html`) is prerendered to HTML at build time, so it can be
+deployed to any static host (Vercel, Netlify, Cloudflare Pages, GitHub Pages)
+with no rewrite rules — build command `pnpm build`, output directory
+`apps/web/dist`.
+
+Company name, contact details, governing law and the Web Store link used by
+the pages all live in `apps/web/src/site.ts`.
 
 ## Contributing
 
@@ -92,6 +117,8 @@ Safety built in:
 
 Privacy: runs only on dashboard.convex.dev, collects nothing, sends nothing
 anywhere. No permissions beyond the content script.
+
+**Privacy policy URL**: `https://<site>/privacy/` (served by `apps/web`)
 
 **Category**: Developer Tools
 

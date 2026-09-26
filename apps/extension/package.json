@@ -1,0 +1,10 @@
+{
+  "name": "@convex-table-deleter/extension",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chrome extension: one-click delete for Convex dashboard tables that aren't in your schema.",
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "zip": "rm -f convex-table-deleter.zip && zip -r convex-table-deleter.zip manifest.json styles.css src icons/icon-16.png icons/icon-32.png icons/icon-48.png icons/icon-128.png"
+  }
+}
