@@ -1,4 +1,8 @@
-# Build artifact — regenerate with the zip command in the README
+node_modules/
+dist/
+dist-ssr/
+
+# Build artifact — regenerate with `pnpm zip`
 *.zip
 
 .DS_Store
